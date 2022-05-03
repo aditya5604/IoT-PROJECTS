@@ -2,8 +2,8 @@
 #include <LiquidCrystal.h> //declare the library for lcd
 
 LiquidCrystal lcd(19, 23, 18, 17, 16, 15);
-const char* ssid = "124 AP"; // enter the wifi name
-const char* password = "02999033"; // enter the wifi password
+const char* ssid = "ADITYA"; // enter the wifi name
+const char* password = "050604"; // enter the wifi password
 
 void wificonnec();
 
