@@ -16,6 +16,13 @@
 
 #define AIO_KEY         "aio_VidS99FKqPWVkiop0p7Pqfbo1zBp"
 
+const int ledPin = 5;  
+
+// setting PWM properties
+const int freq = 5000;
+const int ledChannel = 0;
+const int resolution = 8;
+
 int led_gpio=2;
 int brightness = 0;
 WiFiClient client;     
@@ -48,7 +55,7 @@ pinMode(led_gpio,OUTPUT);
 
   }
 
-  Serial.println();
+ Serial.println();
 
  Serial.println("WiFi connected");
 
@@ -56,6 +63,12 @@ pinMode(led_gpio,OUTPUT);
   Serial.println(WiFi.localIP());
 
   mqtt.subscribe(&LED_CONTROL);
+
+  // configure LED PWM functionalitites
+  ledcSetup(ledChannel, freq, resolution);
+  
+  // attach the channel to the GPIO to be controlled
+  ledcAttachPin(ledPin, ledChannel);
 
 }
 
@@ -79,26 +92,26 @@ Adafruit_MQTT_Subscribe *subscription;
 
       {
 
-        digitalWrite(led_gpio, HIGH);
-        brightness = 255;
-
+         for(int dutyCycle = 0; dutyCycle <= 255; dutyCycle++){   
+             // changing the LED brightness with PWM
+             ledcWrite(led_gpio, dutyCycle);
+             delay(15);
+         }
       }
 
       else
 
       {
-
-        digitalWrite(led_gpio, LOW);
-        brightness = 0;
-
+        for(int dutyCycle = 255; dutyCycle >= 0; dutyCycle--){
+            // changing the LED brightness with PWM
+            ledcWrite(led_gpio, dutyCycle);   
+            delay(15);
       }
 
     }
 
   }
-
-  
-
+  }
 }
 
 void MQTT_connect() {

@@ -17,7 +17,7 @@
 #define AIO_KEY         "aio_VidS99FKqPWVkiop0p7Pqfbo1zBp"
 
 int led_gpio=2;
-int brightness = 0;
+
 WiFiClient client;     
 
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);        
@@ -62,6 +62,7 @@ pinMode(led_gpio,OUTPUT);
 uint32_t x=0;
 
 void loop() {
+  int brightness = 0;
 
    MQTT_connect();
 
@@ -96,6 +97,42 @@ Adafruit_MQTT_Subscribe *subscription;
     }
 
   }
+
+ while ((subscription = mqtt.readSubscription(5000))) {
+
+    if (subscription == &LED_CONTROL) {
+
+      Serial.print(F("Got: "));
+
+      Serial.println((char *)LED_CONTROL.lastread);
+
+       if (!strcmp((char*) LED_CONTROL.lastread, "DIM"))
+
+      {
+
+       if(brightness == 255)
+       {
+        for(brightness = 255; brightness >= 0; brightness--)
+           analogWrite(led_gpio, brightness);
+       }
+       
+      }
+
+      else
+
+      {
+
+       if(brightness == 0)
+       {
+        for(brightness = 0; brightness <= 255; brightness++)
+           analogWrite(led_gpio, brightness);
+       }
+
+      }
+
+    }
+
+  } 
 
   
 
